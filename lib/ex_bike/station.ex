@@ -55,7 +55,7 @@ defmodule ExBike.Station do
 
     if station.bikes_available != attrs["num_bikes_available"] do
       Logger.info(
-        "[Station Sync] Station #{station.name} moved from #{station.bikes_available} to #{updated_station.bikes_available} bikes available"
+        "[Station Sync] Station #{station.name} moved from #{station.bikes_available} to #{updated_station.bikes_available} bikes availables"
       )
 
       Phoenix.PubSub.broadcast(
