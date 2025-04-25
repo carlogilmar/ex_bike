@@ -97,6 +97,7 @@ defmodule ExBikeWeb.DashboardLive do
 
   defp fetch_all_stations do
     Registry.select(StationRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}])
+    |> Enum.shuffle()
     |> Enum.map(&Station.get_station/1)
   end
 end
