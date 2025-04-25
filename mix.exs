@@ -19,7 +19,7 @@ defmodule ExBike.MixProject do
   def application do
     [
       mod: {ExBike.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:observer, :wx, :logger, :runtime_tools]
     ]
   end
 

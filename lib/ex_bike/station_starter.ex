@@ -1,5 +1,7 @@
 defmodule ExBike.StationStarter do
   use GenServer
+  alias ExBike.StationAPI
+  alias ExBike.StationManager
   require Logger
 
   def start_link(_opts) do
@@ -13,7 +15,11 @@ defmodule ExBike.StationStarter do
   end
 
   defp initialize_stations do
-    IO.puts("Creating all the stuff!!")
-    Logger.info("[Station Starter] Creating stations.")
+    stations = StationAPI.get_stations()
+
+    Enum.each(stations, fn %{"station_id" => station_id} = station ->
+      {:ok, _pid} = StationManager.start_station(station)
+      Logger.info("[Station Starter] Station with ID #{station_id} initialized.")
+    end)
   end
 end
