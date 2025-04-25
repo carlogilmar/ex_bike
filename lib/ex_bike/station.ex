@@ -1,5 +1,6 @@
 defmodule ExBike.Station do
   use GenServer
+  require Logger
 
   defstruct [
     :id,
@@ -52,11 +53,17 @@ defmodule ExBike.Station do
         docks_disabled: attrs["num_docks_disabled"]
       })
 
-    Phoenix.PubSub.broadcast(
-      ExBike.PubSub,
-      "stations",
-      {:station_updated, updated_station}
-    )
+    if station.bikes_available != attrs["num_bikes_available"] do
+      Logger.info(
+        "[Station Sync] Station #{station.name} moved from #{station.bikes_available} to #{updated_station.bikes_available} bikes available"
+      )
+
+      Phoenix.PubSub.broadcast(
+        ExBike.PubSub,
+        "stations",
+        {:station_updated, updated_station}
+      )
+    end
 
     {:noreply, updated_station}
   end

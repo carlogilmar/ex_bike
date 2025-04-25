@@ -51,7 +51,7 @@ defmodule ExBikeWeb.DashboardLive do
     )
 
     # Optional: remove highlight after a second
-    Process.send_after(self(), {:clear_highlight, updated_station}, 1000)
+    Process.send_after(self(), {:clear_highlight, updated_station}, 4000)
 
     {:noreply, socket}
   end

@@ -4,7 +4,8 @@ defmodule ExBike.StationSync do
   alias ExBike.StationAPI
   require Logger
 
-  @sync_interval :timer.minutes(5)
+  # :timer.minutes(1)
+  @sync_interval 500
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -33,13 +34,14 @@ defmodule ExBike.StationSync do
   end
 
   def update_stations_status do
+    # Logger.info("[Station Sync] Getting updates.")
+
     stations_updates = StationAPI.get_stations_updates()
 
     stations_updates
     |> Task.async_stream(
       fn %{"station_id" => station_id} = station_update ->
         Station.update_status(station_id, station_update)
-        Logger.info("[Station Sync] Station with ID #{station_id} updated")
       end,
       max_concurrency: 10,
       timeout: 5_000
