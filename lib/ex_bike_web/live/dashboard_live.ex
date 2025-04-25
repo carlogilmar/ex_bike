@@ -6,7 +6,7 @@ defmodule ExBikeWeb.DashboardLive do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(ExBike.PubSub, "stations")
 
-    {:ok, assign(socket, stations: fetch_all_stations(), station_id: nil)}
+    {:ok, assign(socket, stations: fetch_all_stations(), station_id: nil, show_updates: false)}
   end
 
   @impl true
@@ -39,6 +39,38 @@ defmodule ExBikeWeb.DashboardLive do
         <% end %>
       </div>
     </div>
+
+    <%= if @show_updates do %>
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+          <button
+            phx-click="close-updates"
+            class="absolute top-3 right-4 text-gray-400 hover:text-black text-xl"
+          >
+            &times;
+          </button>
+
+          <h2 class="text-xl font-bold mb-4">
+            Updates for Station {@selected_station_id}
+          </h2>
+
+          <ul class="space-y-2 max-h-80 overflow-y-auto text-sm">
+            <%= for u <- @updates do %>
+              <li class="border-b pb-1">
+                🕒 {u.updated_at} –
+                🚲 {u.previous_bikes_availables} → {u.current_bikes_availables}
+              </li>
+            <% end %>
+          </ul>
+
+          <div class="mt-4 text-right">
+            <button phx-click="close-updates" class="text-blue-600 hover:underline">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    <% end %>
     """
   end
 
@@ -65,6 +97,23 @@ defmodule ExBikeWeb.DashboardLive do
     )
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show-updates", %{"id" => station_id}, socket) do
+    station = Station.get_station(station_id)
+
+    {:noreply,
+     assign(socket,
+       show_updates: true,
+       updates: station.bike_updates,
+       selected_station_id: station_id
+     )}
+  end
+
+  @impl true
+  def handle_event("close-updates", _params, socket) do
+    {:noreply, assign(socket, show_updates: false, updates: [], selected_station_id: nil)}
   end
 
   @impl true
