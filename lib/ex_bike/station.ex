@@ -35,6 +35,10 @@ defmodule ExBike.Station do
     GenServer.cast({:via, Registry, {StationRegistry, station_id}}, {:update_status, updates})
   end
 
+  def get_recent_update_count(station_pid, seconds_ago \\ 3600) do
+    GenServer.call(station_pid, {:recent_update_count, seconds_ago})
+  end
+
   @impl true
   def init(station) do
     {:ok, station}
@@ -43,6 +47,18 @@ defmodule ExBike.Station do
   @impl true
   def handle_call(:get_station, _from, station) do
     {:reply, station, station}
+  end
+
+  @impl true
+  def handle_call({:recent_update_count, seconds_ago}, _from, state) do
+    since = NaiveDateTime.utc_now() |> NaiveDateTime.add(-seconds_ago)
+
+    count =
+      Enum.count(state.bike_updates, fn update ->
+        NaiveDateTime.compare(update.updated_at, since) in [:gt, :eq]
+      end)
+
+    {:reply, count, state}
   end
 
   @impl true

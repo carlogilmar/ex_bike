@@ -6,7 +6,13 @@ defmodule ExBikeWeb.DashboardLive do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(ExBike.PubSub, "stations")
 
-    {:ok, assign(socket, stations: fetch_all_stations(), station_id: nil, show_updates: false)}
+    {:ok,
+     assign(socket,
+       stations: fetch_all_stations(),
+       station_id: nil,
+       show_top_modal: false,
+       show_updates: false
+     )}
   end
 
   @impl true
@@ -14,6 +20,10 @@ defmodule ExBikeWeb.DashboardLive do
     ~H"""
     <div class="p-6">
       <h1 class="text-2xl font-bold mb-4">🚲 Station Dashboard</h1>
+      <button phx-click="show_top_active" class="px-4 py-2 bg-green-600 text-white rounded shadow">
+        🔥 Top 10 Active Stations (1h)
+      </button>
+
       <form phx-submit="simulate-update" class="mb-4 flex items-center gap-4">
         <input
           type="text"
@@ -57,7 +67,9 @@ defmodule ExBikeWeb.DashboardLive do
           <ul class="space-y-2 max-h-80 overflow-y-auto text-sm">
             <%= for u <- @updates do %>
               <li class="border-b pb-1">
-                🕒 {u.updated_at} –
+                🕒 {Timex.to_datetime(u.updated_at, "Etc/UTC")
+                |> Timex.Timezone.convert("America/Mexico_City")
+                |> Timex.format!("%Y-%m-%d %H:%M", :strftime)} –
                 🚲 {u.previous_bikes_availables} → {u.current_bikes_availables}
               </li>
             <% end %>
@@ -68,6 +80,37 @@ defmodule ExBikeWeb.DashboardLive do
               Close
             </button>
           </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= if @show_top_modal do %>
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full">
+          <h2 class="text-2xl font-semibold mb-6 text-center">
+            🔥 Most Active Stations in the Last Hour
+          </h2>
+
+          <ul class="divide-y">
+            <%= for {station_id, station_name, count} <- @top_active_stations do %>
+              <li class="py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                  <span class="font-medium text-lg text-blue-600">{station_id}</span>
+                  <span class="text-sm text-gray-600">{station_name}</span>
+                </div>
+                <span class="bg-green-200 px-3 py-1 rounded-full text-sm text-green-800">
+                  {count} Updates
+                </span>
+              </li>
+            <% end %>
+          </ul>
+
+          <button
+            phx-click="close_top_modal"
+            class="mt-6 px-6 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-200"
+          >
+            Close
+          </button>
         </div>
       </div>
     <% end %>
@@ -97,6 +140,17 @@ defmodule ExBikeWeb.DashboardLive do
     )
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_top_active", _params, socket) do
+    active_stations = ExBike.StationsActivity.most_active_stations(3600)
+    {:noreply, assign(socket, show_top_modal: true, top_active_stations: active_stations)}
+  end
+
+  @impl true
+  def handle_event("close_top_modal", _params, socket) do
+    {:noreply, assign(socket, show_top_modal: false)}
   end
 
   @impl true
