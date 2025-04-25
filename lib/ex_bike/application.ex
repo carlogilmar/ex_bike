@@ -17,6 +17,7 @@ defmodule ExBike.Application do
       {Registry, keys: :unique, name: StationRegistry},
       {ExBike.StationSupervisor, []},
       ExBike.StationStarter,
+      ExBike.StationSync,
       ExBikeWeb.Endpoint
     ]
 

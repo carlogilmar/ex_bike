@@ -1,7 +1,20 @@
 defmodule ExBike.Station do
   use GenServer
 
-  defstruct [:id, :external_id, :capacity, :lat, :lon, :name, :rental_methods, :short_name]
+  defstruct [
+    :id,
+    :external_id,
+    :capacity,
+    :lat,
+    :lon,
+    :name,
+    :rental_methods,
+    :short_name,
+    :bikes_available,
+    :bikes_disable,
+    :docks_available,
+    :docks_disabled
+  ]
 
   def start_link(attrs) do
     station = match_struct(attrs)
@@ -15,6 +28,10 @@ defmodule ExBike.Station do
     GenServer.call({:via, Registry, {StationRegistry, station_id}}, :get_station)
   end
 
+  def update_status(station_id, updates) do
+    GenServer.cast({:via, Registry, {StationRegistry, station_id}}, {:update_status, updates})
+  end
+
   @impl true
   def init(station) do
     {:ok, station}
@@ -23,6 +40,19 @@ defmodule ExBike.Station do
   @impl true
   def handle_call(:get_station, _from, station) do
     {:reply, station, station}
+  end
+
+  @impl true
+  def handle_cast({:update_status, attrs}, station) do
+    updated_station =
+      Map.merge(station, %{
+        bikes_available: attrs["num_bikes_available"],
+        bikes_disable: attrs["num_bikes_disabled"],
+        docks_available: attrs["num_docks_available"],
+        docks_disabled: attrs["num_docks_disabled"]
+      })
+
+    {:noreply, updated_station}
   end
 
   defp match_struct(station_attrs) do
