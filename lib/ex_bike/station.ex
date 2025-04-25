@@ -52,6 +52,12 @@ defmodule ExBike.Station do
         docks_disabled: attrs["num_docks_disabled"]
       })
 
+    Phoenix.PubSub.broadcast(
+      ExBike.PubSub,
+      "stations",
+      {:station_updated, updated_station}
+    )
+
     {:noreply, updated_station}
   end
 

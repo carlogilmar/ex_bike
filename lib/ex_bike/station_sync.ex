@@ -4,7 +4,7 @@ defmodule ExBike.StationSync do
   alias ExBike.StationAPI
   require Logger
 
-  @sync_interval :timer.minutes(1)
+  @sync_interval :timer.minutes(5)
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
