@@ -51,22 +51,18 @@ defmodule ExBikeWeb.DashboardLive do
     )
 
     # Optional: remove highlight after a second
-    Process.send_after(self(), {:clear_highlight, updated_station.id}, 1000)
+    Process.send_after(self(), {:clear_highlight, updated_station}, 1000)
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_info({:clear_highlight, station_id}, socket) do
-    station = Enum.find(socket.assigns.stations, &(&1.id == station_id))
-
-    if station do
-      send_update(ExBikeWeb.StationComponent,
-        id: "station-#{station.id}",
-        station: station,
-        highlight: false
-      )
-    end
+  def handle_info({:clear_highlight, station}, socket) do
+    send_update(ExBikeWeb.StationComponent,
+      id: "station-#{station.id}",
+      station: station,
+      highlight: false
+    )
 
     {:noreply, socket}
   end
@@ -85,7 +81,7 @@ defmodule ExBikeWeb.DashboardLive do
       highlight: true
     )
 
-    Process.send_after(self(), {:clear_highlight, updated_station.id}, 3000)
+    Process.send_after(self(), {:clear_highlight, updated_station}, 3000)
 
     # Optionally clear the input field by setting it to nil or an empty string
     socket =
