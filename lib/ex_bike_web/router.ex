@@ -18,6 +18,7 @@ defmodule ExBikeWeb.Router do
     pipe_through :browser
 
     live "/", DashboardLive
+    live "/monitor", MonitorLive.Index
   end
 
   # Other scopes may use custom stacks.
