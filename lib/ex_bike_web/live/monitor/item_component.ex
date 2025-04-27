@@ -5,7 +5,11 @@ defmodule ExBikeWeb.MonitorLive.ItemComponent do
     ~H"""
     <div
       id={"station-#{@station.id}"}
-      class="flex items-center justify-center bg-slate-400 rounded-md text-white text-xs font-bold"
+      class={[
+        "flex items-center justify-center rounded-md text-white text-xs font-bold",
+        @highlight && "bg-blue-500 animate-pulse",
+        !@highlight && "bg-slate-800"
+      ]}
     >
       {@station.bikes_available}
     </div>
@@ -16,6 +20,7 @@ defmodule ExBikeWeb.MonitorLive.ItemComponent do
     socket =
       socket
       |> assign(:station, assigns.station)
+      |> assign(:highlight, Map.get(assigns, :highlight, false))
 
     {:ok, socket}
   end

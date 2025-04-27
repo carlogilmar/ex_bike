@@ -93,6 +93,12 @@ defmodule ExBike.Station do
           {:station_updated, updated_station}
         )
 
+        Phoenix.PubSub.broadcast(
+          ExBike.PubSub,
+          "monitor",
+          {:station_updated, updated_station}
+        )
+
         updated_station
       else
         station
