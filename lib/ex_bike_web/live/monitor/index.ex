@@ -8,8 +8,20 @@ defmodule ExBikeWeb.MonitorLive.Index do
 
     {:ok,
      assign(socket,
-       stations: fetch_all_stations()
+       stations: fetch_all_stations(),
+       selected_station: nil
      )}
+  end
+
+  @impl true
+  def handle_event("station_clicked", %{"id" => station_id}, socket) do
+    station = Station.get_station(station_id)
+    {:noreply, assign(socket, selected_station: station)}
+  end
+
+  @impl true
+  def handle_event("close_modal", _params, socket) do
+    {:noreply, assign(socket, :selected_station, nil)}
   end
 
   @impl true

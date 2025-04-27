@@ -5,9 +5,11 @@ defmodule ExBikeWeb.MonitorLive.ItemComponent do
     ~H"""
     <div
       id={"station-#{@station.id}"}
+      phx-click="station_clicked"
+      phx-value-id={@station.id}
       class={[
-        "flex items-center justify-center rounded-md text-white text-xs font-bold",
-        @highlight && "bg-blue-500 animate-pulse",
+        "flex items-center justify-center rounded-md text-white text-xs font-bold cursor-pointer",
+        @highlight && "bg-amber-500 animate-pulse",
         !@highlight && "bg-slate-800"
       ]}
     >

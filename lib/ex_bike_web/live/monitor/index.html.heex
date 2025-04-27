@@ -7,9 +7,16 @@
         module={ExBikeWeb.MonitorLive.ItemComponent}
         id={"station-#{station.id}"}
         station={station}
-        ,
         highlight={false}
       />
     <% end %>
   </div>
 </div>
+
+<%= if @selected_station do %>
+  <.live_component
+    module={ExBikeWeb.MonitorLive.StationModalComponent}
+    id="station-detail-modal"
+    station={@selected_station}
+  />
+<% end %>
