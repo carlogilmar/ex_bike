@@ -3,9 +3,12 @@
 
   <div class="grid grid-cols-[repeat(auto-fit,minmax(2rem,1fr))] gap-1">
     <%= for station <- @stations do %>
-      <div class="flex items-center justify-center bg-sky-100 rounded-md text-white text-xs font-bold">
-        7
-      </div>
+      <.live_component
+        module={ExBikeWeb.MonitorLive.ItemComponent}
+        id={"station-#{station.id}"}
+        station={station}
+        highlight={false}
+      />
     <% end %>
   </div>
 </div>
