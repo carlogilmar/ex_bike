@@ -21,7 +21,6 @@ defmodule ExBike.Station do
 
   def start_link(attrs) do
     station = match_struct(attrs)
-    IO.inspect(station.id, label: :station)
 
     GenServer.start_link(__MODULE__, station,
       name: {:via, Registry, {StationRegistry, station.id}}
@@ -110,7 +109,7 @@ defmodule ExBike.Station do
 
   defp match_struct(station_attrs) do
     %__MODULE__{
-      id: "#{station_attrs["state"]}-#{station_attrs["station_id"]}",
+      id: station_attrs["station_id"],
       external_id: station_attrs["external_id"],
       capacity: station_attrs["capacity"],
       lat: station_attrs["lat"],

@@ -17,14 +17,9 @@ defmodule ExBike.StationStarter do
   defp initialize_stations do
     stations = StationAPI.get_stations()
 
-    states = ["CDMX", "EDOMEX", "GDL", "MTY"]
-
-    Enum.each(states, fn state ->
-      Enum.each(stations, fn %{"station_id" => station_id} = station ->
-        station = Map.put(station, "state", state)
-        {:ok, _pid} = StationManager.start_station(station)
-        Logger.info("[Station Starter] Station with ID #{station_id} initialized.")
-      end)
+    Enum.each(stations, fn %{"station_id" => station_id} = station ->
+      {:ok, _pid} = StationManager.start_station(station)
+      Logger.info("[Station Starter] Station with ID #{station_id} initialized.")
     end)
   end
 end
