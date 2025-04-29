@@ -1,7 +1,13 @@
-defmodule ExBike.CSVReader do
-  @doc """
-  Reads a CSV file and returns a list of maps for each row (excluding headers).
-  """
+defmodule ExBike.FileLoader do
+  def load_data(path \\ "sample.csv") do
+    {time_microseconds, _result} =
+      :timer.tc(fn ->
+        read_csv(path)
+      end)
+
+    IO.puts("Time taken: #{time_microseconds / 1_000_000} seconds")
+  end
+
   def read_csv(path) do
     path
     |> File.stream!()
@@ -19,7 +25,7 @@ defmodule ExBike.CSVReader do
     add_ride_to_station_day_history(station_history_id, station_day_history_attrs, ride_id)
   end
 
-  def add_ride_to_station_day_history(station_history_day_id, attrs, ride_id) do
+  defp add_ride_to_station_day_history(station_history_day_id, attrs, ride_id) do
     case Registry.lookup(StationHistoryRegistry, station_history_day_id) do
       [{pid, _}] ->
         ExBike.StationDayHistory.add_ride(station_history_day_id, ride_id)
@@ -29,9 +35,13 @@ defmodule ExBike.CSVReader do
         case ExBike.StationDayHistorySupervisor.start_station_day_history(attrs) do
           {:ok, pid} ->
             ExBike.StationDayHistory.add_ride(station_history_day_id, ride_id)
-						{:ok, pid}
-          {:error, {:already_started, pid}} -> {:ok, pid}
-          error -> error
+            {:ok, pid}
+
+          {:error, {:already_started, pid}} ->
+            {:ok, pid}
+
+          error ->
+            error
         end
     end
   end

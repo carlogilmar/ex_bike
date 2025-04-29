@@ -20,7 +20,7 @@ defmodule ExBike.RideSupervisor do
     DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 
-	def get_all_rides do
+  def get_all_rides do
     Registry.select(RidesRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}])
   end
 end
