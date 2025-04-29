@@ -54,7 +54,8 @@ defmodule ExBike.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:req, "~> 0.5.10"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:observer_web, "~> 0.1.0"}
     ]
   end
 

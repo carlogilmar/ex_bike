@@ -1,5 +1,6 @@
 defmodule ExBikeWeb.Router do
   use ExBikeWeb, :router
+  import Observer.Web.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -19,6 +20,8 @@ defmodule ExBikeWeb.Router do
 
     live "/", DashboardLive
     live "/monitor", MonitorLive.Index
+
+    observer_dashboard "/observer"
   end
 
   # Other scopes may use custom stacks.

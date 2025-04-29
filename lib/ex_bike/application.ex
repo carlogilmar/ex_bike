@@ -21,7 +21,7 @@ defmodule ExBike.Application do
       ExBike.StationDayHistorySupervisor,
       ExBike.RideSupervisor,
       ExBike.StationStarter,
-      # ExBike.StationSync,
+      ExBike.StationSync,
       ExBikeWeb.Endpoint
     ]
 
