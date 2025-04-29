@@ -1,0 +1,21 @@
+<h1>Rides</h1>
+
+<div :if={@loading} class="flex justify-center items-center my-4">
+  <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+  <span class="ml-2 text-gray-500">Processing ride {@ride_processed}</span>
+</div>
+
+<div
+  id="rides-grid"
+  phx-update="stream"
+  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4"
+>
+  <%= for {id, ride} <- @streams.rides do %>
+    <div id={id} class="bg-white rounded-xl shadow p-4 border">
+      <h3 class="text-lg font-bold text-gray-800 mb-2">Bike ID: {ride.bike_id}</h3>
+      <p class="text-sm text-gray-600">Station: {ride.station_id}</p>
+      <p class="text-sm text-gray-600">Date: {ride.departure_date}</p>
+      <p class="text-sm text-gray-600">Hour: {ride.departure_hour}</p>
+    </div>
+  <% end %>
+</div>

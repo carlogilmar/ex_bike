@@ -20,8 +20,9 @@ defmodule ExBikeWeb.Router do
 
     live "/", DashboardLive
     live "/monitor", MonitorLive.Index
+    live "/rides", RidesLive.Index
 
-    observer_dashboard "/observer"
+    observer_dashboard("/observer")
   end
 
   # Other scopes may use custom stacks.

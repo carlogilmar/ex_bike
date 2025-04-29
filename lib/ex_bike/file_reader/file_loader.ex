@@ -22,6 +22,20 @@ defmodule ExBike.FileLoader do
     station_history_id = "station-day-history-#{station_id}-#{departure_date}"
     station_day_history_attrs = %{id: station_id, date: departure_date}
     ExBike.RideSupervisor.start_ride(row)
+
+    Phoenix.PubSub.broadcast(
+      ExBike.PubSub,
+      "rides_processed",
+      {:new_ride,
+       %{
+         id: ride_id,
+         bike_id: bike_id,
+         station_id: station_id,
+         departure_date: departure_date,
+         departure_hour: departure_hour
+       }}
+    )
+
     add_ride_to_station_day_history(station_history_id, station_day_history_attrs, ride_id)
   end
 
