@@ -15,6 +15,7 @@ defmodule ExBike.Application do
       # {ExBike.Worker, arg},
       # Start to serve requests, typically the last entry
       {Registry, keys: :unique, name: StationRegistry},
+      {Registry, keys: :unique, name: StationHistoryRegistry},
       {ExBike.StationSupervisor, []},
       ExBike.StationStarter,
       ExBike.StationSync,
