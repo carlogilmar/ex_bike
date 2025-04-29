@@ -19,4 +19,8 @@ defmodule ExBike.StationDayHistorySupervisor do
 
     DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
+
+	def get_all_station_day_history do
+    Registry.select(StationHistoryRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}])
+  end
 end

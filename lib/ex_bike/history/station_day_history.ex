@@ -4,7 +4,7 @@ defmodule ExBike.StationDayHistory do
   defstruct [:station_id, :rides, :date]
 
   def start_link(%{id: id, date: date} = attrs) do
-    station_history_id = "station-day-history-#{id}-#{date}" |> IO.inspect()
+    station_history_id = "station-day-history-#{id}-#{date}"
 
     GenServer.start_link(__MODULE__, attrs,
       name: {:via, Registry, {StationHistoryRegistry, station_history_id}}
