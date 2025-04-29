@@ -18,6 +18,8 @@ defmodule ExBike.Application do
       {Registry, keys: :unique, name: StationHistoryRegistry},
       {Registry, keys: :unique, name: RidesRegistry},
       {ExBike.StationSupervisor, []},
+      ExBike.StationDayHistorySupervisor,
+      ExBike.RideSupervisor,
       ExBike.StationStarter,
       # ExBike.StationSync,
       ExBikeWeb.Endpoint
