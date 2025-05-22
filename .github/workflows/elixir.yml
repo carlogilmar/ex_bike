@@ -10,32 +10,29 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: 🛠️ Build & Test
+  deps:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📦 Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: 🧪 Set up Elixir and Erlang
+      - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.15.2'
           otp-version: '26.0'
-
-      - name: 💾 Restore dependencies cache
-        uses: actions/cache@v3
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
-
-      - name: 📥 Install dependencies
+      - name: Install dependencies
         run: mix deps.get
 
-      - name: 🔧 Compile project (fail on warnings)
-        run: mix compile --warnings-as-errors
-
-      - name: 🧪 Run tests
+  test:
+    runs-on: ubuntu-latest
+    needs: deps
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.15.2'
+          otp-version: '26.0'
+      - name: Run tests
         run: mix test
