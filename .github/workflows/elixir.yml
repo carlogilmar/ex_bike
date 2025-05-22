@@ -1,19 +1,30 @@
+name: Elixir CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
 jobs:
   build:
-    name: CI / Build & Test
+    name: 🛠️ Build & Test
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout repo
+      - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🧪 Set up Elixir/OTP
+      - name: 🧪 Set up Elixir and Erlang
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.15.2'
           otp-version: '26.0'
 
-      - name: 💾 Restore Mix deps cache
+      - name: 💾 Restore dependencies cache
         uses: actions/cache@v3
         with:
           path: deps
@@ -23,7 +34,7 @@ jobs:
       - name: 📥 Install dependencies
         run: mix deps.get
 
-      - name: 🔍 Compile project
+      - name: 🔧 Compile project (fail on warnings)
         run: mix compile --warnings-as-errors
 
       - name: 🧪 Run tests
